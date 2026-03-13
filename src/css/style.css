@@ -273,6 +273,10 @@ body {
   min-height: 100px;
 }
 
+.checkbox-label {
+  font-size: 0.9rem;
+}
+
 /* Tables */
 .table-wrapper {
   overflow-x: auto;

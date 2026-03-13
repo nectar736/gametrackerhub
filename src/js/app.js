@@ -888,6 +888,261 @@
     return html;
   }
 
+  // ===== WHEEL MODULE =====
+  const WheelRenderer = {
+    canvas: null,
+    ctx: null,
+    dpr: 1,
+    baseSize: 350,
+
+    getPalettes() {
+      return {
+        vibrant: {
+          name: 'Vibrant',
+          colors: ['#ef4444', '#f97316', '#eab308', '#22c55e', '#14b8a6', '#3b82f6', '#8b5cf6', '#d946ef', '#f43f5e', '#06b6d4', '#84cc16', '#f59e0b', '#ec4899', '#6366f1', '#10b981', '#14b8a6', '#06b6d4', '#8b5cf6', '#a855f7', '#d946ef', '#f43f5e', '#ef4444', '#f97316', '#eab308', '#22c55e', '#10b981', '#14b8a6', '#06b6d4', '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#f43f5e', '#ef4444', '#f97316', '#fb923c', '#fbbf24', '#facc15', '#a3e635', '#84cc16', '#4ade80', '#22c55e', '#10b981', '#14b8a6', '#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6']
+        },
+        pastel: {
+          name: 'Pastel',
+          colors: ['#fca5a5', '#fdba74', '#fde047', '#86efac', '#5eead4', '#93c5fd', '#c4b5fd', '#f0abfc', '#fda4af', '#7dd3fc', '#a7f3d0', '#fecaca', '#fed7aa', '#fef08a', '#bbf7d0', '#99f6e4', '#bfdbfe', '#ddd6fe', '#fbcfe8', '#e9d5ff', '#fce7f3', '#fff1f2', '#fff7ed', '#fefce8', '#f0fdf4', '#ecfeff', '#eff6ff', '#eef2ff', '#faf5ff', '#fdf2f8', '#fafafa', '#f5f5f4', '#e7e5e4', '#d6d3d1', '#a8a29e', '#78716c', '#57534e', '#44403c', '#292524', '#0c0a09', '#fafafa', '#f5f5f4', '#e7e5e4', '#d6d3d1', '#a8a29e', '#78716c', '#57534e', '#44403c', '#292524', '#0c0a09']
+        },
+        ocean: {
+          name: 'Ocean',
+          colors: ['#0ea5e9', '#0284c7', '#0369a1', '#075985', '#0c4a6e', '#1e3a5f', '#0f766e', '#115e59', '#134e4a', '#1d4ed8', '#1d4ed8', '#1e40af', '#1e3a8a', '#1e3a8a', '#312e81', '#312e81', '#4f46e5', '#4338ca', '#3730a3', '#3730a3', '#7c3aed', '#6d28d9', '#5b21b6', '#5b21b6', '#4c1d95', '#4c1d95', '#06b6d4', '#0891b2', '#155e75', '#164e63', '#0d9488', '#0f766e', '#115e59', '#134e4a', '#1d4ed8', '#1e40af', '#1e3a8a', '#1e3a8a', '#312e81', '#312e81', '#4f46e5', '#4338ca', '#3730a3', '#3730a3', '#7c3aed', '#6d28d9', '#5b21b6', '#5b21b6', '#4c1d95', '#4c1d95']
+        },
+        forest: {
+          name: 'Forest',
+          colors: ['#166534', '#15803d', '#16a34a', '#22c55e', '#4ade80', '#4ade80', '#86efac', '#bbf7d0', '#dcfce7', '#f0fdf4', '#14532d', '#166534', '#15803d', '#16a34a', '#22c55e', '#4ade80', '#86efac', '#bbf7d0', '#dcfce7', '#f0fdf4', '#064e3b', '#065f46', '#047857', '#059669', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#d1fae5', '#ecfdf5', '#064e3b', '#065f46', '#047857', '#059669', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#d1fae5', '#ecfdf5', '#14532d', '#166534', '#15803d', '#16a34a', '#22c55e', '#4ade80', '#86efac', '#bbf7d0', '#dcfce7', '#f0fdf4']
+        },
+        sunset: {
+          name: 'Sunset',
+          colors: ['#7c2d12', '#9a3412', '#c2410c', '#ea580c', '#f97316', '#fb923c', '#fdba74', '#fed7aa', '#ffedd5', '#fff7ed', '#4c1d95', '#5b21b6', '#6d28d9', '#7c3aed', '#8b5cf6', '#a78bfa', '#c4b5fd', '#ddd6fe', '#ede9fe', '#f5f3ff', '#881337', '#9f1239', '#be123c', '#e11d48', '#f43f5e', '#fb7185', '#fda4af', '#fecdd3', '#ffe4e6', '#fff1f2', '#450a0a', '#7f1d1d', '#991b1b', '#b91c1c', '#dc2626', '#ef4444', '#f87171', '#fca5a5', '#fecaca', '#fee2e2', '#7c2d12', '#9a3412', '#c2410c', '#ea580c', '#f97316', '#fb923c', '#fdba74', '#fed7aa', '#ffedd5', '#fff7ed']
+        },
+        neon: {
+          name: 'Neon',
+          colors: ['#ff00ff', '#00ffff', '#ff0080', '#80ff00', '#00ff80', '#8000ff', '#ffff00', '#0080ff', '#ff8000', '#00ff00', '#ff0080', '#8000ff', '#00ffff', '#ffff00', '#ff00ff', '#00ff00', '#ff8000', '#0080ff', '#80ff00', '#ff0000', '#ff00ff', '#00ffaa', '#aa00ff', '#ffaa00', '#00aaff', '#ffaa00', '#00ffaa', '#aa00ff', '#aaff00', '#ff00a0', '#00ffa0', '#a000ff', '#ff00a0', '#00a0ff', '#aaff00', '#00aaff', '#ff00ff', '#00ffff', '#ff0080', '#80ff00', '#00ff80', '#8000ff', '#ffff00', '#0080ff', '#ff8000', '#00ff00', '#ff0080', '#8000ff', '#00ffff', '#ffff00', '#ff00ff']
+        },
+        earth: {
+          name: 'Earth',
+          colors: ['#78350f', '#92400e', '#b45309', '#d97706', '#f59e0b', '#fbbf24', '#fcd34d', '#fde68a', '#fef3c7', '#fffbeb', '#451a03', '#78350f', '#92400e', '#b45309', '#d97706', '#f59e0b', '#fbbf24', '#fcd34d', '#fde68a', '#fef3c7', '#3f6212', '#4d7c0f', '#65a30d', '#84cc16', '#a3e635', '#bef264', '#d9f99d', '#ecfccb', '#f0fdf4', '#f7fee7', '#1a2e05', '#3f6212', '#4d7c0f', '#65a30d', '#84cc16', '#a3e635', '#bef264', '#d9f99d', '#ecfccb', '#f0fdf4', '#134e4a', '#115e59', '#134e4a', '#115e59', '#047857', '#059669', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0']
+        },
+        berry: {
+          name: 'Berry',
+          colors: ['#7f1d1d', '#991b1b', '#b91c1c', '#dc2626', '#ef4444', '#f87171', '#fca5a5', '#fecaca', '#fee2e2', '#fef2f2', '#4c1d95', '#5b21b6', '#6d28d9', '#7c3aed', '#8b5cf6', '#a78bfa', '#c4b5fd', '#ddd6fe', '#ede9fe', '#f5f3ff', '#831843', '#9d174d', '#be185d', '#db2777', '#ec4899', '#f472b6', '#f9a8d4', '#fbcfe8', '#fdf2f8', '#fdf4ff', '#581c87', '#6b21a8', '#7e22ce', '#9333ea', '#a855f7', '#c084fc', '#d8b4fe', '#e9d5ff', '#f3e8ff', '#fae8ff', '#3b0764', '#4c1d95', '#5b21b6', '#6d28d9', '#7c3aed', '#8b5cf6', '#a78bfa', '#c4b5fd', '#ddd6fe', '#ede9fe']
+        },
+        monochrome: {
+          name: 'Monochrome',
+          colors: ['#000000', '#0a0a0a', '#171717', '#262626', '#404040', '#525252', '#737373', '#a3a3a3', '#d4d4d4', '#e5e5e5', '#171717', '#262626', '#404040', '#525252', '#737373', '#a3a3a3', '#d4d4d4', '#e5e5e5', '#f5f5f5', '#fafafa', '#0c0a09', '#1c1917', '#292524', '#44403c', '#57534e', '#78716c', '#a8a29e', '#d6d3d1', '#e7e5e4', '#f5f5f4', '#1c1917', '#292524', '#44403c', '#57534e', '#78716c', '#a8a29e', '#d6d3d1', '#e7e5e4', '#f5f5f4', '#fafafa', '#000000', '#0a0a0a', '#171717', '#262626', '#404040', '#525252', '#737373', '#a3a3a3', '#d4d4d4', '#e5e5e5']
+        },
+        rainbow: {
+          name: 'Rainbow',
+          colors: ['#e11d48', '#f43f5e', '#fb7185', '#fda4af', '#e11d48', '#f43f5e', '#fb7185', '#fda4af', '#e11d48', '#f43f5e', '#f97316', '#fb923c', '#fdba74', '#fed7aa', '#f97316', '#fb923c', '#fdba74', '#fed7aa', '#f97316', '#fb923c', '#eab308', '#fbbf24', '#fcd34d', '#fde68a', '#eab308', '#fbbf24', '#fcd34d', '#fde68a', '#eab308', '#fbbf24', '#16a34a', '#22c55e', '#4ade80', '#86efac', '#16a34a', '#22c55e', '#4ade80', '#86efac', '#16a34a', '#22c55e', '#0ea5e9', '#38bdf8', '#7dd3fc', '#bae6fd', '#0ea5e9', '#38bdf8', '#7dd3fc', '#bae6fd', '#0ea5e9', '#38bdf8']
+        }
+      };
+    },
+
+    getPalette(paletteName) {
+      const palettes = this.getPalettes();
+      return palettes[paletteName] || palettes.vibrant;
+    },
+
+    getColorForIndex(paletteName, index) {
+      const palette = this.getPalette(paletteName);
+      return palette.colors[index % palette.colors.length];
+    },
+
+    init(canvasId) {
+      this.canvas = document.getElementById(canvasId);
+      if (!this.canvas) return false;
+      
+      this.dpr = window.devicePixelRatio || 1;
+      const size = this.baseSize;
+      
+      this.canvas.width = size * this.dpr;
+      this.canvas.height = size * this.dpr;
+      this.canvas.style.width = size + 'px';
+      this.canvas.style.height = size + 'px';
+      
+      this.ctx = this.canvas.getContext('2d');
+      this.ctx.scale(this.dpr, this.dpr);
+      
+      return true;
+    },
+
+    draw(entries, paletteName, rotation = 0) {
+      if (!this.ctx || entries.length < 2) return;
+      
+      const ctx = this.ctx;
+      const canvas = this.canvas;
+      const size = this.baseSize;
+      const centerX = size / 2;
+      const centerY = size / 2;
+      const radius = (size / 2) - 4;
+      const numSegments = entries.length;
+      const anglePerSegment = (2 * Math.PI) / numSegments;
+      
+      ctx.clearRect(0, 0, size, size);
+      
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.rotate(rotation);
+      
+      for (let i = 0; i < numSegments; i++) {
+        const startAngle = i * anglePerSegment;
+        const endAngle = (i + 1) * anglePerSegment;
+        const color = this.getColorForIndex(paletteName, i);
+        
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, radius, startAngle, endAngle);
+        ctx.closePath();
+        
+        ctx.fillStyle = color;
+        ctx.fill();
+        
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        ctx.save();
+        ctx.rotate(startAngle + anglePerSegment / 2);
+        
+        ctx.textAlign = 'right';
+        ctx.fillStyle = this.getTextColor(color);
+        ctx.font = 'bold ' + (size > 300 ? 14 : 12) + 'px system-ui, -apple-system, sans-serif';
+        
+        const text = entries[i];
+        const maxLength = 14;
+        const displayText = text.length > maxLength ? text.substring(0, maxLength - 1) + '…' : text;
+        
+        ctx.fillText(displayText, radius - 15, 5);
+        ctx.restore();
+      }
+      
+      ctx.restore();
+      
+      const centerRadius = 28;
+      const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, centerRadius);
+      gradient.addColorStop(0, '#ffffff');
+      gradient.addColorStop(1, '#e5e7eb');
+      
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, centerRadius, 0, 2 * Math.PI);
+      ctx.fillStyle = gradient;
+      ctx.fill();
+      
+      ctx.strokeStyle = '#374151';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    },
+
+    getTextColor(hexColor) {
+      const r = parseInt(hexColor.slice(1, 3), 16);
+      const g = parseInt(hexColor.slice(3, 5), 16);
+      const b = parseInt(hexColor.slice(5, 7), 16);
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      return luminance > 0.6 ? '#1f2937' : '#ffffff';
+    }
+  };
+
+  function renderWheel() {
+    const users = Storage.getAllUsers();
+    const savedEntries = JSON.parse(localStorage.getItem('bgt_wheel_entries') || '[]');
+    const savedPalette = localStorage.getItem('bgt_wheel_palette') || 'vibrant';
+    
+    let entries = savedEntries.length > 0 ? savedEntries : users.map(u => u.name);
+    if (entries.length === 0) {
+      entries = ['Alice', 'Bob', 'Carol', 'David'];
+    }
+
+    const palettes = WheelRenderer.getPalettes();
+    const paletteOptions = Object.entries(palettes).map(([key, p]) => 
+      `<option value="${key}" ${key === savedPalette ? 'selected' : ''}>${p.name}</option>`
+    ).join('');
+
+    return `
+      <div class="page">
+        <div class="container">
+          <h1>🎯 Random Picker</h1>
+          
+          <div style="display:grid;grid-template-columns:1fr 380px;gap:1.5rem;align-items:start;">
+            <div>
+              <div class="card" style="text-align:center;">
+                <div id="wheel-container" style="position:relative; width:450px; height:450px; margin:0 auto;">
+                  <canvas id="wheel-canvas"></canvas>
+                  <div id="wheel-pointer" style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:18px solid transparent; border-right:18px solid transparent; border-top:35px solid #ef4444; z-index:10;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></div>
+                </div>
+                <div style="margin-top:1.5rem;">
+                  <div class="form-group" style="margin:0 auto; max-width:100px;">
+                    <label class="form-label" style="margin-bottom:0.25rem; text-align:center;">Winners</label>
+                    <input type="number" id="wheel-winners" class="form-input" value="1" min="1" max="10" style="text-align:center;">
+                  </div>
+                </div>
+                <div id="wheel-result" style="margin-top:1rem; min-height:40px;">
+                  <p class="text-muted">Click Spin to select a random winner!</p>
+                </div>
+                <button id="spin-btn" class="btn btn-primary btn-lg" style="font-size:1.25rem; padding:1rem 3rem; margin-top:0.5rem;" onclick="app.spinWheel()">🎰 SPIN!</button>
+              </div>
+            </div>
+
+            <div>
+              <div class="card mb-3">
+                <h3 class="mb-2">Entries</h3>
+                <p class="text-muted mb-2" style="font-size:0.85rem;">Add names or use players:</p>
+                <div class="flex gap-1 mb-2 flex-wrap">
+                  ${users.map(u => `
+                    <button class="btn btn-sm" style="background:var(--color-bg);border:1px solid var(--color-border);" onclick="app.addWheelEntry('${escapeHtml(u.name)}')">+ ${escapeHtml(u.name)}</button>
+                  `).join('')}
+                </div>
+                <textarea id="wheel-entries" class="form-textarea" rows="5" placeholder="Enter names, one per line" style="width:100%;">${entries.join('\n')}</textarea>
+                <div class="flex gap-1 mt-2">
+                  <button class="btn btn-sm btn-secondary" onclick="app.updateWheelEntries()">Update</button>
+                  <button class="btn btn-sm btn-danger" onclick="app.clearWheelEntries()">Clear</button>
+                </div>
+              </div>
+
+              <div class="card mb-3">
+                <h3 class="mb-2">Color Palette</h3>
+                <select id="wheel-palette" class="form-select" style="max-width:200px;" onchange="app.changeWheelPalette()">
+                  ${paletteOptions}
+                </select>
+                <div id="palette-preview" class="flex gap-1 mt-2 flex-wrap">
+                  ${entries.slice(0, 15).map((_, i) => `
+                    <div style="width:18px;height:18px;border-radius:3px;background:${WheelRenderer.getColorForIndex(savedPalette, i)};" title="Entry ${i + 1}"></div>
+                  `).join('')}
+                  ${entries.length > 15 ? `<span class="text-muted" style="font-size:0.75rem;">+${entries.length - 15}</span>` : ''}
+                </div>
+              </div>
+
+              <div class="card mb-3">
+                <h3 class="mb-2">Spin Settings</h3>
+                <div class="form-group" style="margin-bottom:0.75rem;">
+                  <label class="form-label" style="margin-bottom:0.5rem;">Speed</label>
+                  <div style="display:flex; align-items:center; gap:0.75rem;">
+                    <span style="font-size:0.8rem; color:var(--color-text-light);">Slow</span>
+                    <input type="range" id="wheel-speed" class="form-input" value="5" min="1" max="10" style="flex:1; padding:0.5rem; cursor:pointer;">
+                    <span style="font-size:0.8rem; color:var(--color-text-light);">Fast</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <h3 class="mb-2">History</h3>
+                <div id="wheel-history"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <style>
+        #wheel-canvas { border-radius:50%; box-shadow:0 4px 25px rgba(0,0,0,0.2); }
+        @media (max-width:900px) {
+          .container > div[style*="grid"] { grid-template-columns:1fr !important; }
+          #wheel-container { width:350px !important; height:350px !important; }
+        }
+      </style>
+    `;
+  }
+
   function renderSettings() {
     const users = Storage.getAllUsers();
     const games = Storage.getAllGames();
@@ -1029,10 +1284,15 @@
         games: renderGames,
         matches: renderMatches,
         analytics: renderAnalytics,
+        wheel: renderWheel,
         settings: renderSettings
       };
 
       main.innerHTML = views[this.currentView] ? views[this.currentView]() : renderDashboard();
+      
+      if (this.currentView === 'wheel') {
+        setTimeout(() => this.initWheel(), 0);
+      }
     },
 
     // User functions
@@ -1527,7 +1787,482 @@
       input.click();
     },
 
-    closeModal
+    closeModal,
+
+    wheelEntries: [],
+    wheelPalette: 'vibrant',
+    wheelCanvas: null,
+    wheelCtx: null,
+    wheelHistory: [],
+    isSpinning: false,
+
+    getWheelEntries() {
+      const textarea = document.getElementById('wheel-entries');
+      if (textarea) {
+        const text = textarea.value;
+        const entries = text.split(/[\n,]+/).map(e => e.trim()).filter(e => e.length > 0);
+        const uniqueEntries = [...new Set(entries)];
+        localStorage.setItem('bgt_wheel_entries', JSON.stringify(uniqueEntries));
+        return uniqueEntries;
+      }
+      return JSON.parse(localStorage.getItem('bgt_wheel_entries') || '[]');
+    },
+
+    getWheelPalette() {
+      const select = document.getElementById('wheel-palette');
+      if (select) {
+        const palette = select.value;
+        localStorage.setItem('bgt_wheel_palette', palette);
+        return palette;
+      }
+      return localStorage.getItem('bgt_wheel_palette') || 'vibrant';
+    },
+
+    changeWheelPalette() {
+      this.wheelPalette = this.getWheelPalette();
+      this.initWheel();
+      this.updatePalettePreview();
+    },
+
+    updatePalettePreview() {
+      const preview = document.getElementById('palette-preview');
+      if (!preview) return;
+      
+      const entries = this.getWheelEntries();
+      const palette = this.getWheelPalette();
+      
+      preview.innerHTML = entries.slice(0, 20).map((_, i) => 
+        `<div style="width:20px;height:20px;border-radius:4px;background:${WheelRenderer.getColorForIndex(palette, i)};" title="Entry ${i + 1}"></div>`
+      ).join('') + (entries.length > 20 ? `<span class="text-muted" style="font-size:0.8rem;">+${entries.length - 20} more</span>` : '');
+    },
+
+    updateWheelEntries() {
+      const textarea = document.getElementById('wheel-entries');
+      if (!textarea) return;
+      
+      const text = textarea.value;
+      const rawEntries = text.split(/[\n,]+/).map(e => e.trim()).filter(e => e.length > 0);
+      const uniqueEntries = [...new Set(rawEntries)];
+      
+      if (rawEntries.length !== uniqueEntries.length) {
+        const duplicates = rawEntries.length - uniqueEntries.length;
+        alert(`Removed ${duplicates} duplicate ${duplicates === 1 ? 'entry' : 'entries'}. Duplicates are not allowed.`);
+        textarea.value = uniqueEntries.join('\n');
+      }
+      
+      const entries = uniqueEntries;
+      if (entries.length < 2) {
+        alert('Please add at least 2 entries to spin the wheel.');
+        return;
+      }
+      this.wheelPalette = this.getWheelPalette();
+      this.initWheel();
+      this.updatePalettePreview();
+    },
+
+    clearWheelEntries() {
+      if (confirm('Clear all entries?')) {
+        document.getElementById('wheel-entries').value = '';
+        localStorage.setItem('bgt_wheel_entries', '[]');
+        this.wheelEntries = [];
+        this.wheelPalette = this.getWheelPalette();
+        this.initWheel();
+      }
+    },
+
+    addWheelEntry(name) {
+      const textarea = document.getElementById('wheel-entries');
+      if (textarea) {
+        const currentEntries = textarea.value.split(/[\n,]+/).map(e => e.trim()).filter(e => e.length > 0);
+        if (currentEntries.some(e => e.toLowerCase() === name.toLowerCase())) {
+          alert('This entry already exists on the wheel.');
+          return;
+        }
+        const current = textarea.value.trim();
+        textarea.value = current ? current + '\n' + name : name;
+        this.updateWheelEntries();
+      }
+    },
+
+    initWheel() {
+      this.wheelEntries = this.getWheelEntries();
+      this.wheelPalette = this.getWheelPalette();
+      
+      if (this.wheelEntries.length < 2) {
+        return;
+      }
+
+      const canvas = document.getElementById('wheel-canvas');
+      if (!canvas) return;
+      
+      this.wheelCanvas = canvas;
+      this.wheelCtx = canvas.getContext('2d');
+      
+      const dpr = window.devicePixelRatio || 1;
+      const size = 450;
+      
+      canvas.width = size * dpr;
+      canvas.height = size * dpr;
+      canvas.style.width = size + 'px';
+      canvas.style.height = size + 'px';
+      
+      this.wheelCtx.scale(dpr, dpr);
+      
+      this.drawWheel(0);
+    },
+
+    drawWheel(rotation) {
+      if (!this.wheelCtx || this.wheelEntries.length < 2) return;
+      
+      const ctx = this.wheelCtx;
+      const entries = this.wheelEntries;
+      const palette = this.wheelPalette;
+      const size = 450;
+      const centerX = size / 2;
+      const centerY = size / 2;
+      const radius = (size / 2) - 4;
+      const numSegments = entries.length;
+      const anglePerSegment = (2 * Math.PI) / numSegments;
+      
+      ctx.clearRect(0, 0, size, size);
+      
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.rotate(rotation);
+      
+      for (let i = 0; i < numSegments; i++) {
+        const startAngle = i * anglePerSegment;
+        const endAngle = (i + 1) * anglePerSegment;
+        const color = WheelRenderer.getColorForIndex(palette, i);
+        
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, radius, startAngle, endAngle);
+        ctx.closePath();
+        
+        ctx.fillStyle = color;
+        ctx.fill();
+        
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        ctx.save();
+        ctx.rotate(startAngle + anglePerSegment / 2);
+        
+        ctx.textAlign = 'right';
+        const textColor = WheelRenderer.getTextColor(color);
+        ctx.fillStyle = textColor;
+        ctx.font = 'bold 14px system-ui, -apple-system, sans-serif';
+        
+        const text = entries[i];
+        const maxLength = 14;
+        const displayText = text.length > maxLength ? text.substring(0, maxLength - 1) + '…' : text;
+        
+        ctx.fillText(displayText, radius - 15, 5);
+        ctx.restore();
+      }
+      
+      ctx.restore();
+      
+      const centerRadius = 28;
+      const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, centerRadius);
+      gradient.addColorStop(0, '#ffffff');
+      gradient.addColorStop(1, '#e5e7eb');
+      
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, centerRadius, 0, 2 * Math.PI);
+      ctx.fillStyle = gradient;
+      ctx.fill();
+      
+      ctx.strokeStyle = '#374151';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    },
+
+    spinWheel() {
+      if (this.isSpinning) return;
+      
+      this.wheelEntries = this.getWheelEntries();
+      this.wheelPalette = this.getWheelPalette();
+      
+      if (this.wheelEntries.length < 2) {
+        alert('Please add at least 2 entries to spin the wheel.');
+        return;
+      }
+
+      this.isSpinning = true;
+      const spinBtn = document.getElementById('spin-btn');
+      if (spinBtn) spinBtn.disabled = true;
+
+      const numWinners = parseInt(document.getElementById('wheel-winners')?.value || '1');
+      const speed = parseInt(document.getElementById('wheel-speed')?.value || '5');
+      const duration = 8000 - (speed * 700);
+      const removeWinners = false;
+      
+      let currentRotation = 0;
+      const totalSpins = 5 + Math.random() * 3;
+      const targetRotation = totalSpins * 2 * Math.PI;
+      const startTime = Date.now();
+
+      const winners = [];
+      let remainingEntries = [...this.wheelEntries];
+      const palette = this.wheelPalette;
+      const numSegments = remainingEntries.length;
+      const segmentAngle = (2 * Math.PI) / numSegments;
+      
+      let lastSegment = -1;
+      let audioCtx = null;
+      
+      const playTick = (freq) => {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+        osc.start(audioCtx.currentTime);
+        osc.stop(audioCtx.currentTime + 0.05);
+      };
+
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const newRotation = targetRotation * easeOut;
+        
+        const normalizedRotation = newRotation % (2 * Math.PI);
+        const pointerAngle = ((2 * Math.PI) - normalizedRotation + 1.5 * Math.PI) % (2 * Math.PI);
+        const currentSegment = Math.floor(pointerAngle / segmentAngle) % numSegments;
+        
+        if (currentSegment !== lastSegment && progress < 0.95) {
+          playTick(800 + (currentSegment * 50));
+          lastSegment = currentSegment;
+        }
+        
+        currentRotation = newRotation;
+
+        this.wheelEntries = remainingEntries;
+        this.wheelPalette = palette;
+        this.drawWheel(currentRotation);
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          this.isSpinning = false;
+          if (spinBtn) spinBtn.disabled = false;
+          
+          const winningIndex = Math.floor(pointerAngle / segmentAngle) % numSegments;
+          
+          const winner = remainingEntries[winningIndex];
+          winners.push(winner);
+
+          if (removeWinners) {
+            remainingEntries.splice(winningIndex, 1);
+          }
+
+          if (winners.length < numWinners && remainingEntries.length > 0) {
+            const confirmMore = confirm(`Winner: ${winner}!\n\nPick another winner?`);
+            if (confirmMore) {
+              this.wheelEntries = remainingEntries;
+              this.initWheel();
+              setTimeout(() => this.spinWheelContinue(winners, numWinners, removeWinners, remainingEntries, palette), 500);
+              return;
+            }
+          }
+
+          this.showWheelResult(winners);
+          this.addToWheelHistory(winners);
+          
+          if (removeWinners) {
+            localStorage.setItem('bgt_wheel_entries', JSON.stringify(remainingEntries));
+            document.getElementById('wheel-entries').value = remainingEntries.join('\n');
+          }
+        }
+      };
+
+      animate();
+    },
+
+    spinWheelContinue(winners, numWinners, removeWinners, remainingEntries, palette) {
+      if (this.isSpinning) return;
+      
+      this.isSpinning = true;
+      const spinBtn = document.getElementById('spin-btn');
+      if (spinBtn) spinBtn.disabled = true;
+
+      const speed = parseInt(document.getElementById('wheel-speed')?.value || '5');
+      const duration = 5000 - (speed * 400);
+      
+      let currentRotation = 0;
+      const totalSpins = 3 + Math.random() * 2;
+      const targetRotation = totalSpins * 2 * Math.PI;
+      const startTime = Date.now();
+
+      const numSegments = remainingEntries.length;
+      const segmentAngle = (2 * Math.PI) / numSegments;
+      let lastSegment = -1;
+      let audioCtx = null;
+      
+      const playTick = (freq) => {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+        osc.start(audioCtx.currentTime);
+        osc.stop(audioCtx.currentTime + 0.05);
+      };
+
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const newRotation = targetRotation * easeOut;
+        
+        const normalizedRotation = newRotation % (2 * Math.PI);
+        const pointerAngle = ((2 * Math.PI) - normalizedRotation + 1.5 * Math.PI) % (2 * Math.PI);
+        const currentSegment = Math.floor(pointerAngle / segmentAngle) % numSegments;
+        
+        if (currentSegment !== lastSegment && progress < 0.95) {
+          playTick(800 + (currentSegment * 50));
+          lastSegment = currentSegment;
+        }
+        
+        currentRotation = newRotation;
+
+        this.wheelEntries = remainingEntries;
+        this.wheelPalette = palette;
+        this.drawWheel(currentRotation);
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          this.isSpinning = false;
+          if (spinBtn) spinBtn.disabled = false;
+          
+          const winningIndex = Math.floor(pointerAngle / segmentAngle) % numSegments;
+          
+          const winner = remainingEntries[winningIndex];
+          winners.push(winner);
+
+          if (removeWinners) {
+            remainingEntries.splice(winningIndex, 1);
+          }
+
+          if (winners.length < numWinners && remainingEntries.length > 0) {
+            const confirmMore = confirm(`Winner: ${winner}!\n\nPick another winner?`);
+            if (confirmMore) {
+              this.wheelEntries = remainingEntries;
+              this.initWheel();
+              setTimeout(() => this.spinWheelContinue(winners, numWinners, removeWinners, remainingEntries, palette), 500);
+              return;
+            }
+          }
+
+          this.showWheelResult(winners);
+          this.addToWheelHistory(winners);
+          
+          if (removeWinners) {
+            localStorage.setItem('bgt_wheel_entries', JSON.stringify(remainingEntries));
+            document.getElementById('wheel-entries').value = remainingEntries.join('\n');
+          }
+        }
+      };
+
+      animate();
+    },
+
+    showWheelResult(winners) {
+      const winnersHtml = winners.map((w, i) => `
+        <div style="font-size:1.5rem; font-weight:700; padding:1rem; background:var(--color-success-light); border-radius:var(--radius-md); margin-bottom:0.5rem;">
+          🥇 ${i + 1}. ${escapeHtml(w)}
+        </div>
+      `).join('');
+
+      const modal = document.createElement('div');
+      modal.className = 'modal-backdrop active';
+      modal.innerHTML = `
+        <div class="modal" style="max-width:400px; text-align:center; padding:1.5rem;">
+          <div style="font-size:3rem; margin-bottom:0.5rem;">🎉</div>
+          <h2 style="margin:0 0 1rem;">${winners.length === 1 ? 'Winner!' : 'Winners!'}</h2>
+          ${winnersHtml}
+          <div class="flex gap-1 justify-center" style="flex-wrap:wrap; margin-top:1.5rem;">
+            <button class="btn btn-secondary" onclick="app.removeWheelWinner('${escapeHtml(winners[0])}'); app.closeModal();">❌ Remove</button>
+            <button class="btn btn-primary" onclick="app.closeModal();">OK</button>
+          </div>
+        </div>
+      `;
+      modal.onclick = function(e) {
+        if (e.target === modal) app.closeModal();
+      };
+      document.body.appendChild(modal);
+
+      const resultDiv = document.getElementById('wheel-result');
+      if (resultDiv) {
+        resultDiv.innerHTML = `<p class="text-muted">Click Spin to select a random winner!</p>`;
+      }
+    },
+
+    removeWheelWinner(name) {
+      const entries = this.getWheelEntries();
+      const filtered = entries.filter(e => e.toLowerCase() !== name.toLowerCase());
+      localStorage.setItem('bgt_wheel_entries', JSON.stringify(filtered));
+      document.getElementById('wheel-entries').value = filtered.join('\n');
+      this.wheelEntries = filtered;
+      this.initWheel();
+      this.updatePalettePreview();
+    },
+
+    addToWheelHistory(winners) {
+      this.wheelHistory.unshift({
+        winners: [...winners],
+        time: new Date().toISOString()
+      });
+      this.wheelHistory = this.wheelHistory.slice(0, 10);
+      localStorage.setItem('bgt_wheel_history', JSON.stringify(this.wheelHistory));
+      this.renderWheelHistory();
+    },
+
+    renderWheelHistory() {
+      const historyDiv = document.getElementById('wheel-history');
+      if (!historyDiv) return;
+      
+      const history = JSON.parse(localStorage.getItem('bgt_wheel_history') || '[]');
+      if (history.length === 0) {
+        historyDiv.innerHTML = '<p class="text-muted">No spins yet.</p>';
+        return;
+      }
+
+      historyDiv.innerHTML = history.map((h, index) => `
+        <div style="padding:0.75rem; background:var(--color-bg); border-radius:var(--radius-md); margin-bottom:0.5rem; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-weight:600;">${h.winners.map(w => escapeHtml(w)).join(', ')}</div>
+            <div class="text-muted" style="font-size:0.8rem;">${formatDate(h.time)}</div>
+          </div>
+          <button class="btn btn-sm btn-danger" style="padding:0.25rem 0.5rem; font-size:0.75rem;" onclick="app.deleteWheelHistory(${index})">✕</button>
+        </div>
+      `).join('');
+    },
+
+    deleteWheelHistory(index) {
+      const history = JSON.parse(localStorage.getItem('bgt_wheel_history') || '[]');
+      history.splice(index, 1);
+      localStorage.setItem('bgt_wheel_history', JSON.stringify(history));
+      this.wheelHistory = history;
+      this.renderWheelHistory();
+    }
   };
 
   // Initialize when DOM ready
