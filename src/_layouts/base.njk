@@ -14,7 +14,12 @@
         <span class="logo-icon">🎲</span>
         <span>Board Game Tracker</span>
       </a>
-      <nav class="nav">
+      <button class="nav-toggle" onclick="app.toggleNav()" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <nav class="nav" id="main-nav">
         <button class="btn btn-secondary btn-sm" id="nav-dashboard" onclick="app.navigate('dashboard')">📊 Dashboard</button>
         <button class="btn btn-secondary btn-sm" id="nav-users" onclick="app.navigate('users')">👥 Players</button>
         <button class="btn btn-secondary btn-sm" id="nav-games" onclick="app.navigate('games')">🎲 Games</button>

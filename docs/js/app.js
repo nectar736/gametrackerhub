@@ -1067,8 +1067,8 @@
           <div style="display:grid;grid-template-columns:1fr 380px;gap:1.5rem;align-items:start;">
             <div>
               <div class="card" style="text-align:center;">
-                <div id="wheel-container" style="position:relative; width:450px; height:450px; margin:0 auto;">
-                  <canvas id="wheel-canvas"></canvas>
+                <div id="wheel-container" style="position:relative; width:450px; height:450px; margin:0 auto; text-align:center;">
+                  <canvas id="wheel-canvas" style="display:block; margin:0 auto;"></canvas>
                   <div id="wheel-pointer" style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:18px solid transparent; border-right:18px solid transparent; border-top:35px solid #ef4444; z-index:10;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></div>
                 </div>
                 <div style="margin-top:1.5rem;">
@@ -1137,7 +1137,12 @@
         #wheel-canvas { border-radius:50%; box-shadow:0 4px 25px rgba(0,0,0,0.2); }
         @media (max-width:900px) {
           .container > div[style*="grid"] { grid-template-columns:1fr !important; }
-          #wheel-container { width:350px !important; height:350px !important; }
+          #wheel-container { width:320px !important; height:320px !important; margin:0 auto !important; display:block !important; }
+          #wheel-container canvas { display:block; margin:0 auto; }
+        }
+        @media (max-width:480px) {
+          #wheel-container { width:280px !important; height:280px !important; }
+          .page h1 { font-size:1.5rem; }
         }
       </style>
     `;
@@ -1272,6 +1277,18 @@
       document.querySelectorAll('.nav .btn').forEach(btn => btn.classList.remove('active'));
       const activeBtn = document.getElementById('nav-' + view);
       if (activeBtn) activeBtn.classList.add('active');
+      // Close mobile nav
+      const nav = document.getElementById('main-nav');
+      const toggle = document.querySelector('.nav-toggle');
+      if (nav) nav.classList.remove('open');
+      if (toggle) toggle.classList.remove('active');
+    },
+
+    toggleNav() {
+      const nav = document.getElementById('main-nav');
+      const toggle = document.querySelector('.nav-toggle');
+      if (nav) nav.classList.toggle('open');
+      if (toggle) toggle.classList.toggle('active');
     },
 
     render() {
